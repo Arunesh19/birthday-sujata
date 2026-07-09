@@ -68,7 +68,6 @@
             margin-bottom: 40px;
         }
 
-        /* Fixed structural grid for alignment synchronization */
         .cake-container {
             width: 240px;
             height: 240px;
@@ -81,13 +80,12 @@
             align-items: center;
         }
 
-        /* Candle anchoring mechanism directly related to cake tiers */
         .candle {
             width: 10px;
             height: 35px;
             background: linear-gradient(to top, #ffd54f, #ffb300);
             position: absolute;
-            bottom: 140px; /* Locked right above the 3rd tier layer line */
+            bottom: 140px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 3px;
@@ -113,12 +111,11 @@
             100% { transform: translateX(-50%) scale(1.1) rotate(1deg); }
         }
 
-        /* Profile Photo centering layer frame placement */
         .cake-photo-holder {
             position: absolute;
             width: 75px;
             height: 75px;
-            bottom: 40px; /* Sits cleanly over mid/lower layers without throwing text alignments out */
+            bottom: 40px;
             border-radius: 50%;
             border: 3px solid #ffd54f;
             box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
@@ -134,7 +131,6 @@
             object-fit: cover;
         }
 
-        /* 3-Tier layered alignment configuration matrix */
         .layer {
             border-radius: 12px 12px 4px 4px;
             position: relative;
@@ -174,7 +170,6 @@
             border-radius: 10px;
         }
 
-        /* Blown out interactive styles */
         .cake-container.extinguished .flame {
             opacity: 0;
             transform: translateX(-50%) scale(0);
@@ -224,6 +219,7 @@
 </head>
 <body>
 
+    <audio id="birthdaySong" src="birthday.mp3" loop prefetch></audio>
     <canvas id="bgCanvas"></canvas>
 
     <div class="cake-panel">
@@ -231,27 +227,15 @@
         <p class="desc">Tap directly on the 3-layer premium cake to extinguish the flame and initialize credentials...</p>
         
         <div class="cake-container" id="birthdayCake" onclick="extinguishFlame(event)">
-            
-            <!-- Candle explicitly locked exactly on top tier layer surface -->
             <div class="candle">
                 <div class="flame" id="candleFlame"></div>
             </div>
-
-            <!-- Profile Frame nested layer -->
             <div class="cake-photo-holder">
                 <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
             </div>
-
-            <!-- Crisp 3-Layer Block System -->
-            <div class="layer layer-top">
-                <div class="frosting-line"></div>
-            </div>
-            <div class="layer layer-middle">
-                <div class="frosting-line"></div>
-            </div>
-            <div class="layer layer-bottom">
-                <div class="frosting-line"></div>
-            </div>
+            <div class="layer layer-top"><div class="frosting-line"></div></div>
+            <div class="layer layer-middle"><div class="frosting-line"></div></div>
+            <div class="layer layer-bottom"><div class="frosting-line"></div></div>
         </div>
 
         <button class="action-btn" onclick="navigateCertificate(event)">Collect Official Certificate →</button>
@@ -260,9 +244,17 @@
     <script>
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('birthdaySong');
         let animationFrameId = null;
         let isTabActive = true;
         let ambientParticles = [];
+
+        // Instantly kickstart audio play as soon as the document registers a touch/click context
+        document.addEventListener('click', () => {
+            if(audio.paused && !document.getElementById('birthdayCake').classList.contains('extinguished')) {
+                audio.play().catch(e => console.log("Autoplay deferred:", e));
+            }
+        }, { once: true });
 
         function resize() {
             canvas.width = window.innerWidth;
@@ -272,9 +264,7 @@
         resize();
 
         class SoftGlowNode {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -297,9 +287,7 @@
             }
         }
 
-        for(let i=0; i<30; i++) {
-            ambientParticles.push(new SoftGlowNode());
-        }
+        for(let i=0; i<30; i++) { ambientParticles.push(new SoftGlowNode()); }
 
         function runRenderEngine() {
             if (!isTabActive) return;
@@ -324,11 +312,9 @@
 
         function destructAndNavigate() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            audio.pause(); // Final safety drop
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.width = 0;
-            canvas.height = 0;
-            let id = window.setInterval(function() {}, 0);
-            while (id--) { window.clearInterval(id); }
+            canvas.width = 0; canvas.height = 0;
             window.location.replace("certificate.html");
         }
 
@@ -337,6 +323,7 @@
             if(cake.classList.contains('extinguished')) return;
             
             cake.classList.add('extinguished');
+            audio.pause(); // <--- Instantly pauses the music when flame is popped down out of frame
             
             const circle = document.createElement('span');
             const diameter = Math.max(cake.clientWidth, cake.clientHeight);
