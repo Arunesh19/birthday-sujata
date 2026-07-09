@@ -32,7 +32,6 @@
             pointer-events: none;
         }
 
-        /* Passport Booklet Outer Container */
         .passport-book {
             position: relative;
             z-index: 10;
@@ -49,7 +48,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Individual Passport Page Architecture */
         .passport-page {
             position: absolute;
             width: 100%;
@@ -70,7 +68,6 @@
             backface-visibility: hidden;
         }
 
-        /* Page Stacking Order States */
         .page-1 { z-index: 5; }
         .page-2 { z-index: 4; transform: rotateY(90deg); opacity: 0; pointer-events: none; }
 
@@ -83,11 +80,10 @@
         .passport-book.flipped .page-2 {
             transform: rotateY(0deg);
             opacity: 1;
-            pointer-events: absolute;
+            pointer-events: auto; /* Fixed interactions */
             z-index: 6;
         }
 
-        /* Header Styling */
         .passport-header {
             text-align: center;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
@@ -112,7 +108,6 @@
             margin-top: 4px;
         }
 
-        /* Profile Block Elements */
         .profile-section {
             display: flex;
             gap: 20px;
@@ -155,7 +150,6 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Decorative Visa Stamps System */
         .stamp-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -194,7 +188,6 @@
             margin-top: 2px;
         }
 
-        /* Unified Action Controls */
         .action-btn {
             position: relative;
             overflow: hidden;
@@ -218,9 +211,7 @@
             box-shadow: 0 10px 25px rgba(255, 213, 79, 0.15);
         }
 
-        .action-btn:hover {
-            transform: scale(1.02);
-        }
+        .action-btn:hover { transform: scale(1.02); }
 
         .ripple {
             position: absolute;
@@ -242,7 +233,6 @@
 
     <div class="passport-book" id="passportBook">
         
-        <!-- PAGE 1: Identity Profile Credentials -->
         <div class="passport-page page-1">
             <div class="passport-header">
                 <div class="passport-title">Gateway Passport</div>
@@ -283,7 +273,6 @@
             <button class="action-btn" onclick="flipPassport(true, event)">View Visas & Milestones →</button>
         </div>
 
-        <!-- PAGE 2: Visa Entries & System Exit Routing -->
         <div class="passport-page page-2">
             <div class="passport-header">
                 <div class="passport-title">Visa Entries</div>
@@ -318,7 +307,6 @@
     </div>
 
     <script>
-        /* Anti-Leak Canvas Thread Management Configuration Pointers */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId = null;
@@ -332,11 +320,8 @@
         window.addEventListener('resize', resize);
         resize();
 
-        /* High-Performance Micro-Glow Cosmic Particles */
         class StarNode {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -346,9 +331,7 @@
             }
             update() {
                 this.alpha += this.speed;
-                if(this.alpha > 0.6 || this.alpha < 0.1) {
-                    this.speed = -this.speed;
-                }
+                if(this.alpha > 0.6 || this.alpha < 0.1) { this.speed = -this.speed; }
             }
             draw() {
                 ctx.save();
@@ -361,11 +344,8 @@
             }
         }
 
-        for(let i=0; i<35; i++) {
-            stellarNodes.push(new StarNode());
-        }
+        for(let i=0; i<35; i++) { stellarNodes.push(new StarNode()); }
 
-        /* Throttling-Insulated Animation Loop */
         function runPassportEngine() {
             if (!isTabActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -377,7 +357,6 @@
         }
         runPassportEngine();
 
-        /* Background/Focus Visibility Change Monitoring Hook */
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isTabActive = false;
@@ -388,22 +367,6 @@
             }
         });
 
-        /* Absolute Memory Disconnect Routine and Pipeline Route Swap */
-        function destructAndFinalize() {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.width = 0;
-            canvas.height = 0;
-
-            let id = window.setInterval(function() {}, 0);
-            while (id--) { window.clearInterval(id); }
-
-            // Route execution loop to final screen or fallback loop
-            alert("Passport Gate Verified! Have an exceptional day ahead!");
-        }
-
-        /* Page Flipping Matrix Handler Toggles */
         function flipPassport(forward, e) {
             createRipple(e);
             const book = document.getElementById('passportBook');
@@ -414,12 +377,18 @@
             }
         }
 
+        /* Fixed Navigation Hook to pass directly into guestbook.html */
         function completeOnboarding(e) {
             createRipple(e);
-            setTimeout(destructAndFinalize, 400);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0; canvas.height = 0;
+            
+            setTimeout(() => {
+                window.location.replace("guestbook.html");
+            }, 400);
         }
 
-        /* Reusable UI Touch Ripple Vector Engine Builder */
         function createRipple(e) {
             const btn = e.currentTarget;
             const circle = document.createElement('span');
