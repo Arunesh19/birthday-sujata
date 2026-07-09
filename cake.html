@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blow the Candles! 🎂</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #090514, #020105);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cake-panel {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 450px;
+            padding: 40px 30px;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: paneShow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes paneShow {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .title-glow {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ffd54f, #ff4081);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .desc {
+            font-size: 0.95rem;
+            opacity: 0.75;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* Fixed structural grid for alignment synchronization */
+        .cake-container {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 30px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* Candle anchoring mechanism directly related to cake tiers */
+        .candle {
+            width: 10px;
+            height: 35px;
+            background: linear-gradient(to top, #ffd54f, #ffb300);
+            position: absolute;
+            bottom: 140px; /* Locked right above the 3rd tier layer line */
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+            z-index: 20;
+        }
+
+        .flame {
+            width: 14px;
+            height: 22px;
+            background: linear-gradient(to bottom, #ffeb3b, #ff5722);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px #ff5722, 0 0 25px #ffeb3b;
+            animation: flicker 0.6s infinite alternate ease-in-out;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-1deg); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(1deg); }
+        }
+
+        /* Profile Photo centering layer frame placement */
+        .cake-photo-holder {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            bottom: 40px; /* Sits cleanly over mid/lower layers without throwing text alignments out */
+            border-radius: 50%;
+            border: 3px solid #ffd54f;
+            box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
+            z-index: 15;
+            overflow: hidden;
+            background: #151520;
+            transition: transform 0.5s ease, border-color 0.5s ease;
+        }
+
+        .cake-photo-holder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 3-Tier layered alignment configuration matrix */
+        .layer {
+            border-radius: 12px 12px 4px 4px;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .layer-top {
+            width: 130px;
+            height: 45px;
+            background: linear-gradient(to right, #ff4081, #ff80ab, #ff4081);
+            z-index: 5;
+        }
+
+        .layer-middle {
+            width: 175px;
+            height: 50px;
+            background: linear-gradient(to right, #e91e63, #ff4081, #e91e63);
+            z-index: 4;
+            margin-top: -5px;
+        }
+
+        .layer-bottom {
+            width: 220px;
+            height: 55px;
+            background: linear-gradient(to right, #c2185b, #e91e63, #c2185b);
+            z-index: 3;
+            margin-top: -5px;
+        }
+
+        .frosting-line {
+            width: 102%;
+            height: 10px;
+            background: #ffffff;
+            position: absolute;
+            top: 10px;
+            left: -1%;
+            border-radius: 10px;
+        }
+
+        /* Blown out interactive styles */
+        .cake-container.extinguished .flame {
+            opacity: 0;
+            transform: translateX(-50%) scale(0);
+            pointer-events: none;
+        }
+
+        .cake-container.extinguished .cake-photo-holder {
+            border-color: #ff4081;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 64, 129, 0.6);
+        }
+
+        .action-btn {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(255, 64, 129, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 16px 35px rgba(255, 64, 129, 0.5);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="cake-panel">
+        <h1 class="title-glow">Make a Wish, Sujata!</h1>
+        <p class="desc">Tap directly on the 3-layer premium cake to extinguish the flame and initialize credentials...</p>
+        
+        <div class="cake-container" id="birthdayCake" onclick="extinguishFlame(event)">
+            
+            <!-- Candle explicitly locked exactly on top tier layer surface -->
+            <div class="candle">
+                <div class="flame" id="candleFlame"></div>
+            </div>
+
+            <!-- Profile Frame nested layer -->
+            <div class="cake-photo-holder">
+                <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+            </div>
+
+            <!-- Crisp 3-Layer Block System -->
+            <div class="layer layer-top">
+                <div class="frosting-line"></div>
+            </div>
+            <div class="layer layer-middle">
+                <div class="frosting-line"></div>
+            </div>
+            <div class="layer layer-bottom">
+                <div class="frosting-line"></div>
+            </div>
+        </div>
+
+        <button class="action-btn" onclick="navigateCertificate(event)">Collect Official Certificate →</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+        let isTabActive = true;
+        let ambientParticles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class SoftGlowNode {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = -(Math.random() * 0.4 + 0.1);
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+            update() {
+                this.y += this.speedY;
+                if(this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff80ab';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for(let i=0; i<30; i++) {
+            ambientParticles.push(new SoftGlowNode());
+        }
+
+        function runRenderEngine() {
+            if (!isTabActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for(let p of ambientParticles) {
+                p.update();
+                p.draw();
+            }
+            animationFrameId = requestAnimationFrame(runRenderEngine);
+        }
+        runRenderEngine();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isTabActive = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            } else {
+                isTabActive = true;
+                runRenderEngine();
+            }
+        });
+
+        function destructAndNavigate() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0;
+            canvas.height = 0;
+            let id = window.setInterval(function() {}, 0);
+            while (id--) { window.clearInterval(id); }
+            window.location.replace("certificate.html");
+        }
+
+        function extinguishFlame(e) {
+            const cake = document.getElementById('birthdayCake');
+            if(cake.classList.contains('extinguished')) return;
+            
+            cake.classList.add('extinguished');
+            
+            const circle = document.createElement('span');
+            const diameter = Math.max(cake.clientWidth, cake.clientHeight);
+            const radius = diameter / 2;
+            const rect = cake.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            cake.appendChild(circle);
+        }
+
+        function navigateCertificate(e) {
+            const btn = e.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+            const radius = diameter / 2;
+            const rect = btn.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            btn.appendChild(circle);
+
+            setTimeout(destructAndNavigate, 400);
+        }
+    </script>
+</body>
+</html>

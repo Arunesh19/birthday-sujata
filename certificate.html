@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Milestone Certificate 📜</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf.js CDN for clean client-side PDF compilation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #050510, #020205);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Certificate Capture Frame target */
+        .certificate-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 550px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            margin-bottom: 25px;
+        }
+
+        /* Elegant inner border accent for the PDF print look */
+        .certificate-border-accent {
+            position: absolute;
+            inset: 12px;
+            border: 1px dashed rgba(255, 213, 79, 0.3);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .cert-tag {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffd54f;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        /* Profile Image Frame Placement */
+        .cert-avatar-frame {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            border: 3px solid #ff4081;
+            margin: 0 auto 20px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.2);
+        }
+
+        .cert-avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .recipient-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, #ffffff, #ffd54f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cert-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.75);
+            max-width: 440px;
+            margin: 0 auto 30px;
+        }
+
+        .signature-block {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            padding: 8px 30px 0;
+        }
+
+        .signature-title {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Interface Action Layout Controls Frame */
+        .button-layout-group {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 550px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-button {
+            position: relative;
+            overflow: hidden;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #ffd54f, #ffb300);
+            color: #050510;
+            box-shadow: 0 10px 25px rgba(255, 213, 79, 0.2);
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.2);
+        }
+
+        .action-button:hover {
+            transform: scale(1.02);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* Specific CSS overrides to ensure clear printing context during html2pdf compilation */
+        .pdf-print-mode {
+            background: #0d0d1a !important;
+            box-shadow: none !important;
+            border: 2px solid #ffd54f !important;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Certificate Target Node Box Structure -->
+    <div class="certificate-wrapper" id="captureTarget">
+        <div class="certificate-border-accent"></div>
+        
+        <div class="cert-tag">Honorary Decree</div>
+        
+        <div class="cert-avatar-frame">
+            <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+        </div>
+
+        <h2 class="recipient-name">Sujata</h2>
+        
+        <p class="cert-description">
+            This verification token officially confirms the successful processing of all historical milestones, validation protocols, and elite achievements with premium distinction status.
+        </p>
+
+        <div class="signature-block">
+            <div class="signature-title">System Verified Token</div>
+        </div>
+    </div>
+
+    <!-- CTA Command Actions Frame Container -->
+    <div class="button-layout-group">
+        <button class="action-button download-btn" onclick="triggerPdfDownload(event)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"/></svg>
+            Save PDF
+        </button>
+        <button class="action-button next-btn" onclick="proceedToPassport(event)">
+            Continue
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+    </div>
+
+    <script>
+        /* Anti-Lag Thread State Pointers and Hook Configurations */
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+        let isTabActive = true;
+        let stellarParticles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        /* Ambient Cosmic Particle Blueprints */
+        class SlowCosmoNode {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 1.2 + 0.4;
+                this.alpha = Math.random() * 0.3 + 0.1;
+                this.dx = (Math.random() - 0.5) * 0.15;
+            }
+            update() {
+                this.x += this.dx;
+                if (this.x < 0 || this.x > canvas.width) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 40; i++) {
+            stellarParticles.push(new SlowCosmoNode());
+        }
+
+        /* Throttling-Insulated Render Engine Loop */
+        function runAmbientLoop() {
+            if (!isTabActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let node of stellarParticles) {
+                node.update();
+                node.draw();
+            }
+            animationFrameId = requestAnimationFrame(runAmbientLoop);
+        }
+        runAmbientLoop();
+
+        /* Focus State Oblers */
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isTabActive = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            } else {
+                isTabActive = true;
+                runAmbientLoop();
+            }
+        });
+
+        /* Document PDF Compiler Handler Call */
+        function triggerPdfDownload(e) {
+            createRipple(e);
+            
+            const element = document.getElementById('captureTarget');
+            
+            // Inject sharp printing profile overrides
+            element.classList.add('pdf-print-mode');
+
+            const exportOptions = {
+                margin:       15,
+                filename:     'Sujata_Milestone_Certificate.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d0d1a' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(exportOptions).from(element).save().then(() => {
+                // Strip print overrides once compilation handoff finishes
+                element.classList.remove('pdf-print-mode');
+            });
+        }
+
+        /* Absolute Thread Cleanup Routine and State Navigation Linker */
+        function destructAndNavigate() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0;
+            canvas.height = 0;
+
+            let id = window.setInterval(function() {}, 0);
+            while (id--) { window.clearInterval(id); }
+
+            window.location.replace("passport.html");
+        }
+
+        function proceedToPassport(e) {
+            createRipple(e);
+            setTimeout(destructAndNavigate, 400);
+        }
+
+        /* Reusable UI Interactive Vector Ripple Builder */
+        function createRipple(e) {
+            const btn = e.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+            const radius = diameter / 2;
+            const rect = btn.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            btn.appendChild(circle);
+        }
+    </script>
+</body>
+</html>

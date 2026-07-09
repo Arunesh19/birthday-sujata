@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway Passport ✈️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #04020a, #010103);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Passport Booklet Outer Container */
+        .passport-book {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            height: 580px;
+            perspective: 1500px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: bookShow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes bookShow {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Individual Passport Page Architecture */
+        .passport-page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 24px;
+            padding: 35px 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            transform-origin: left center;
+            backface-visibility: hidden;
+        }
+
+        /* Page Stacking Order States */
+        .page-1 { z-index: 5; }
+        .page-2 { z-index: 4; transform: rotateY(90deg); opacity: 0; pointer-events: none; }
+
+        .passport-book.flipped .page-1 {
+            transform: rotateY(-90deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .passport-book.flipped .page-2 {
+            transform: rotateY(0deg);
+            opacity: 1;
+            pointer-events: absolute;
+            z-index: 6;
+        }
+
+        /* Header Styling */
+        .passport-header {
+            text-align: center;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 15px;
+        }
+
+        .passport-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ffd54f, #ff4081);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .passport-sub {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-top: 4px;
+        }
+
+        /* Profile Block Elements */
+        .profile-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .passport-photo {
+            width: 100px;
+            height: 125px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .passport-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .meta-data-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .data-row .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .data-row .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Decorative Visa Stamps System */
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            flex-grow: 1;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .visa-stamp {
+            border: 2px dashed rgba(255, 64, 129, 0.3);
+            border-radius: 16px;
+            padding: 15px 10px;
+            text-align: center;
+            transform: rotate(-3deg);
+            background: rgba(255, 64, 129, 0.02);
+        }
+
+        .visa-stamp:nth-child(even) {
+            transform: rotate(4deg);
+            border-color: rgba(255, 213, 79, 0.3);
+            background: rgba(255, 213, 79, 0.02);
+        }
+
+        .stamp-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .stamp-date {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-top: 2px;
+        }
+
+        /* Unified Action Controls */
+        .action-btn {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: auto;
+        }
+
+        .btn-alt {
+            background: linear-gradient(45deg, #ffd54f, #ffb300);
+            color: #04020a;
+            box-shadow: 0 10px 25px rgba(255, 213, 79, 0.15);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="passport-book" id="passportBook">
+        
+        <!-- PAGE 1: Identity Profile Credentials -->
+        <div class="passport-page page-1">
+            <div class="passport-header">
+                <div class="passport-title">Gateway Passport</div>
+                <div class="passport-sub">Identity & Credentials</div>
+            </div>
+
+            <div class="profile-section">
+                <div class="passport-photo">
+                    <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+                </div>
+                <div class="meta-data-fields">
+                    <div class="data-row">
+                        <div class="label">Surname / Name</div>
+                        <div class="value">Sujata</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="label">Nationality</div>
+                        <div class="value">VIP Earthling</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="label">Passport Number</div>
+                        <div class="value">BDAY-2026-SUJ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="meta-data-fields" style="margin-top: 25px; flex-grow: 1;">
+                <div class="data-row">
+                    <div class="label">Date of Issue</div>
+                    <div class="value">06 JUL 2026</div>
+                </div>
+                <div class="data-row">
+                    <div class="label">Authority</div>
+                    <div class="value">The Ultimate Birthday Committee</div>
+                </div>
+            </div>
+
+            <button class="action-btn" onclick="flipPassport(true, event)">View Visas & Milestones →</button>
+        </div>
+
+        <!-- PAGE 2: Visa Entries & System Exit Routing -->
+        <div class="passport-page page-2">
+            <div class="passport-header">
+                <div class="passport-title">Visa Entries</div>
+                <div class="passport-sub">Validated Chapters</div>
+            </div>
+
+            <div class="stamp-grid">
+                <div class="visa-stamp">
+                    <div class="stamp-title">🎂 LAYER CAKE</div>
+                    <div class="stamp-date">PASSED // 2026</div>
+                </div>
+                <div class="visa-stamp">
+                    <div class="stamp-title">📜 CERTIFIED</div>
+                    <div class="stamp-date">APPROVED // ISSUED</div>
+                </div>
+                <div class="visa-stamp">
+                    <div class="stamp-title">💖 WISHLIST</div>
+                    <div class="stamp-date">UNLOCKED // REVEALED</div>
+                </div>
+                <div class="visa-stamp">
+                    <div class="stamp-title">🌟 NEW YEAR</div>
+                    <div class="stamp-date">INITIALIZED // LIVE</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                <button class="action-btn btn-alt" onclick="flipPassport(false, event)">← Back to Profile</button>
+                <button class="action-btn" onclick="completeOnboarding(event)">Exit Verification Gateway</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* Anti-Leak Canvas Thread Management Configuration Pointers */
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+        let isTabActive = true;
+        let stellarNodes = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        /* High-Performance Micro-Glow Cosmic Particles */
+        class StarNode {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 1 + 0.3;
+                this.alpha = Math.random() * 0.4 + 0.1;
+                this.speed = Math.random() * 0.05 + 0.02;
+            }
+            update() {
+                this.alpha += this.speed;
+                if(this.alpha > 0.6 || this.alpha < 0.1) {
+                    this.speed = -this.speed;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for(let i=0; i<35; i++) {
+            stellarNodes.push(new StarNode());
+        }
+
+        /* Throttling-Insulated Animation Loop */
+        function runPassportEngine() {
+            if (!isTabActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for(let star of stellarNodes) {
+                star.update();
+                star.draw();
+            }
+            animationFrameId = requestAnimationFrame(runPassportEngine);
+        }
+        runPassportEngine();
+
+        /* Background/Focus Visibility Change Monitoring Hook */
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isTabActive = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            } else {
+                isTabActive = true;
+                runPassportEngine();
+            }
+        });
+
+        /* Absolute Memory Disconnect Routine and Pipeline Route Swap */
+        function destructAndFinalize() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0;
+            canvas.height = 0;
+
+            let id = window.setInterval(function() {}, 0);
+            while (id--) { window.clearInterval(id); }
+
+            // Route execution loop to final screen or fallback loop
+            alert("Passport Gate Verified! Have an exceptional day ahead!");
+        }
+
+        /* Page Flipping Matrix Handler Toggles */
+        function flipPassport(forward, e) {
+            createRipple(e);
+            const book = document.getElementById('passportBook');
+            if(forward) {
+                book.classList.add('flipped');
+            } else {
+                book.classList.remove('flipped');
+            }
+        }
+
+        function completeOnboarding(e) {
+            createRipple(e);
+            setTimeout(destructAndFinalize, 400);
+        }
+
+        /* Reusable UI Touch Ripple Vector Engine Builder */
+        function createRipple(e) {
+            const btn = e.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+            const radius = diameter / 2;
+            const rect = btn.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            btn.appendChild(circle);
+        }
+    </script>
+</body>
+</html>

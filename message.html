@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Message For You 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #060312, #020106);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphic Narrative Panel Layout */
+        .message-panel {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            padding: 40px 30px;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: panelFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes panelFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .heart-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            filter: drop-shadow(0 0 12px rgba(255, 64, 129, 0.6));
+            animation: heartbeat 1.4s infinite ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.12); }
+            40% { transform: scale(1.05); }
+            60% { transform: scale(1.15); }
+        }
+
+        .title-glow {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ffffff, #ff4081);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        /* Narrative typography blocks */
+        .narrative-body {
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            text-align: left;
+            margin-bottom: 35px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Customized minimal scrollbar track padding */
+        .narrative-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .narrative-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .narrative-paragraph {
+            margin-bottom: 16px;
+        }
+
+        /* iOS Unified Navigation Button Module */
+        .action-btn {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(255, 64, 129, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 16px 35px rgba(255, 64, 129, 0.5);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="message-panel">
+        <div class="heart-icon">💝</div>
+        <h1 class="title-glow">To Sujata</h1>
+        
+        <div class="narrative-body">
+            <p class="narrative-paragraph">
+                Happy Birthday, Sujata! Today marks the celebration of another incredible chapter in your journey, and I wanted to create something truly unique to match your vibrant spirit.
+            </p>
+            <p class="narrative-paragraph">
+                Through every milestone unlocked, you bring an unmatched energy, intelligence, and sharp wit that brightens up the entire room. You navigate everything with a signature style and charm that is entirely your own.
+            </p>
+            <p class="narrative-paragraph">
+                May this year bring you endless reasons to smile, brilliant new opportunities to explore, and all the success you deserve. Keep shining bright and radiating that incredible positive aura!
+            </p>
+        </div>
+
+        <button class="action-btn" onclick="proceedToPassport(event)">Open Gateway Passport →</button>
+    </div>
+
+    <script>
+        /* Anti-Leak Thread State Pointer Configurations */
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+        let isTabActive = true;
+        let floatingHearts = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        /* Premium Floating Heart/Glow Vector Particles */
+        class ElegantHeartNode {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 20;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = -(Math.random() * 0.5 + 0.2);
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.swingValue = Math.random() * 100;
+                this.swingSpeed = Math.random() * 0.02 + 0.01;
+            }
+            update() {
+                this.y += this.speedY;
+                this.swingValue += this.swingSpeed;
+                this.x += Math.sin(this.swingValue) * 0.2;
+                
+                if (this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff4081';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 25; i++) {
+            floatingHearts.push(new ElegantHeartNode());
+        }
+
+        /* Throttling-Insulated Core Animation Render Engine Loop */
+        function runMessageEngine() {
+            if (!isTabActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let heart of floatingHearts) {
+                heart.update();
+                heart.draw();
+            }
+            animationFrameId = requestAnimationFrame(runMessageEngine);
+        }
+        runMessageEngine();
+
+        /* Focus Active Tab State Observer Observers */
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isTabActive = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            } else {
+                isTabActive = true;
+                runMessageEngine();
+            }
+        });
+
+        /* Absolute Memory Disconnect Routine and Pipeline Route Swap */
+        function destructAndNavigate() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = 0;
+            canvas.height = 0;
+
+            let id = window.setInterval(function() {}, 0);
+            while (id--) { window.clearInterval(id); }
+
+            window.location.replace("passport.html");
+        }
+
+        /* Tap Event Ripple Animation Action Processor */
+        function proceedToPassport(e) {
+            const btn = e.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+            const radius = diameter / 2;
+            const rect = btn.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+            btn.appendChild(circle);
+
+            setTimeout(destructAndNavigate, 400);
+        }
+    </script>
+</body>
+</html>
