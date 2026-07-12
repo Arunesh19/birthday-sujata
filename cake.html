@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,6 +24,7 @@
             color: white;
         }
 
+        /* Ambient Sparkles Canvas Backdrop */
         #bgCanvas {
             position: fixed;
             inset: 0;
@@ -31,17 +32,59 @@
             pointer-events: none;
         }
 
+        /* Intercept Overlay to bypass aggressive Browser Autoplay Policies */
+        .interact-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 2, 8, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .interact-overlay.hide {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.05);
+        }
+
+        .envelope-btn {
+            background: linear-gradient(45deg, #ffd54f, #ff4081);
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 64, 129, 0.4);
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .envelope-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modernized Glassmorphic Cake Display Panel */
         .cake-panel {
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 450px;
-            padding: 40px 30px;
+            max-width: 440px;
+            padding: 35px 25px;
             border-radius: 32px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255,255,255,0.1);
             text-align: center;
             opacity: 0;
             transform: scale(0.95);
@@ -53,24 +96,30 @@
         }
 
         .title-glow {
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             font-weight: 700;
-            background: linear-gradient(45deg, #ffd54f, #ff4081);
+            background: linear-gradient(45deg, #ffe082, #ff4081, #b388ff);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 12px;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
         }
 
         .desc {
-            font-size: 0.95rem;
-            opacity: 0.75;
+            font-size: 0.9rem;
+            opacity: 0.7;
             line-height: 1.6;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
         }
 
         .cake-container {
             width: 240px;
-            height: 290px;
+            height: 310px;
             margin: 0 auto 30px;
             position: relative;
             cursor: pointer;
@@ -78,6 +127,34 @@
             flex-direction: column;
             justify-content: flex-end;
             align-items: center;
+        }
+
+        /* Luminous Floating Polaroid Picture Framing */
+        .cake-photo-holder {
+            position: absolute;
+            width: 90px;
+            height: 105px;
+            bottom: 200px;
+            background: linear-gradient(180deg, #ffffff, #f5f5f7);
+            padding: 6px 6px 20px 6px;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 213, 79, 0.2);
+            z-index: 25;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
+            animation: gentleFloat 4s ease-in-out infinite alternate;
+        }
+
+        .cake-photo-holder img {
+            width: 100%;
+            height: 76px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes gentleFloat {
+            0% { transform: translateY(0) rotate(-2deg); }
+            100% { transform: translateY(-8px) rotate(2deg); }
         }
 
         .candle {
@@ -111,27 +188,7 @@
             100% { transform: translateX(-50%) scale(1.1) rotate(1deg); }
         }
 
-        /* Repositioned Photo Holder Above the Cake Layers */
-        .cake-photo-holder {
-            position: absolute;
-            width: 75px;
-            height: 75px;
-            bottom: 190px; /* Moved cleanly above top tier layer stack heights */
-            border-radius: 50%;
-            border: 3px solid #ffd54f;
-            box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
-            z-index: 25;
-            overflow: hidden;
-            background: #151520;
-            transition: transform 0.5s ease, border-color 0.5s ease;
-        }
-
-        .cake-photo-holder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
+        /* Structural Design Base Alignment for Cake Tiers */
         .layer {
             border-radius: 12px 12px 4px 4px;
             position: relative;
@@ -171,6 +228,7 @@
             border-radius: 10px;
         }
 
+        /* State Adjustments when Candle is Extinguished */
         .cake-container.extinguished .flame {
             opacity: 0;
             transform: translateX(-50%) scale(0);
@@ -178,11 +236,13 @@
         }
 
         .cake-container.extinguished .cake-photo-holder {
-            border-color: #ff4081;
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(255, 64, 129, 0.6);
+            animation: none;
+            background: linear-gradient(180deg, #ffffff, #fff0f5);
+            box-shadow: 0 20px 45px rgba(255, 64, 129, 0.4);
+            transform: scale(1.05) rotate(0deg) translateY(-5px);
         }
 
+        /* Action Controls Layout Adjustments */
         .action-btn {
             position: relative;
             overflow: hidden;
@@ -196,11 +256,11 @@
             font-size: 1rem;
             cursor: pointer;
             box-shadow: 0 12px 30px rgba(255, 64, 129, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
         }
 
         .action-btn:hover {
-            transform: scale(1.02);
+            transform: scale(1.01);
             box-shadow: 0 16px 35px rgba(255, 64, 129, 0.5);
         }
 
@@ -220,6 +280,13 @@
 </head>
 <body>
 
+    <!-- Overlay Prompt forcing immediate Interaction to trigger Audio Autoplay instantly -->
+    <div class="interact-overlay" id="greetingOverlay">
+        <h1 class="title-glow" style="font-size: 2.2rem;">You're Invited! ✨</h1>
+        <p class="desc" style="max-width: 300px; margin-bottom: 20px;">Open Sujata's Birthday Celebration dashboard to play music and blow the candles.</p>
+        <button class="envelope-btn" onclick="openCelebration()">Open Celebration Card 💌</button>
+    </div>
+
     <audio id="birthdaySong" src="birthday.mp3" loop prefetch></audio>
     <canvas id="bgCanvas"></canvas>
 
@@ -228,6 +295,7 @@
         <p class="desc">Tap directly on the 3-layer premium cake to extinguish the flame and initialize credentials...</p>
         
         <div class="cake-container" id="birthdayCake" onclick="extinguishFlame(event)">
+            <!-- Polaroid Frame Floating Safely Above Top Frosting Layer Base -->
             <div class="cake-photo-holder">
                 <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
             </div>
@@ -250,11 +318,11 @@
         let isTabActive = true;
         let ambientParticles = [];
 
-        document.addEventListener('click', () => {
-            if(audio.paused && !document.getElementById('birthdayCake').classList.contains('extinguished')) {
-                audio.play().catch(e => console.log("Autoplay deferred:", e));
-            }
-        }, { once: true });
+        // Fades overlay context and initializes music playback instantly in a persistent loop
+        function openCelebration() {
+            document.getElementById('greetingOverlay').classList.add('hide');
+            audio.play().catch(e => console.log("Audio contextual fallback triggered:", e));
+        }
 
         function resize() {
             canvas.width = window.innerWidth;
@@ -318,12 +386,16 @@
             window.location.replace("certificate.html");
         }
 
+        // Extinguishes flame and completely silences the audio loop automatically
         function extinguishFlame(e) {
             const cake = document.getElementById('birthdayCake');
             if(cake.classList.contains('extinguished')) return;
             
             cake.classList.add('extinguished');
-            audio.pause(); 
+            
+            // Instantly pause and reset audio tracks when candle drops flame states
+            audio.pause();
+            audio.currentTime = 0;
             
             const circle = document.createElement('span');
             const diameter = Math.max(cake.clientWidth, cake.clientHeight);
@@ -339,7 +411,6 @@
         function navigateCertificate(e) {
             const cake = document.getElementById('birthdayCake');
             
-            // Critical Validation: Enforce candle blow out rule before permitting access routing
             if (!cake.classList.contains('extinguished')) {
                 alert("Blow the candle first to proceed with next page");
                 return;
