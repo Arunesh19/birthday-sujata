@@ -36,11 +36,12 @@
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 450px;
+            max-width: 420px;
             padding: 40px 30px;
             border-radius: 32px;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
             text-align: center;
@@ -63,24 +64,57 @@
         }
 
         .subtitle {
-            font-size: 1rem;
-            opacity: 0.8;
+            font-size: 0.9rem;
+            opacity: 0.7;
             margin-bottom: 30px;
         }
 
-        /* Countdown Visual Counter */
-        .counter-box {
-            font-size: 4rem;
-            font-weight: 700;
+        /* Form Group Styles */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
             color: #ffd54f;
-            text-shadow: 0 0 20px rgba(255,213,79,0.4);
-            margin-bottom: 30px;
-            animation: pulseScale 1s infinite alternate ease-in-out;
+            opacity: 0.9;
+            padding-left: 4px;
         }
 
-        @keyframes pulseScale {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); }
+        .input-field {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #ff4081;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(255, 64, 129, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .error-message {
+            color: #ff5252;
+            font-size: 0.85rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         /* Premium iOS Trigger Button */
@@ -98,6 +132,7 @@
             cursor: pointer;
             box-shadow: 0 12px 30px rgba(255, 64, 129, 0.3);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+            margin-top: 10px;
         }
 
         .enter-btn:hover {
@@ -126,19 +161,29 @@
 
     <div class="welcome-card">
         <h1 class="title-glow">Sujata's Surprise</h1>
-        <p class="subtitle">Initializing secure celebration gateway sequence...</p>
+        <p class="subtitle">Enter credentials to unlock the gateway</p>
         
-        <div class="counter-box" id="countdownDisplay">5</div>
+        <form id="loginForm" onsubmit="handleVerification(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="input-field" placeholder="Enter your name" autocomplete="off" required>
+            </div>
 
-        <button class="enter-btn" onclick="gateRedirect(event)">Enter Gateway Now →</button>
+            <div class="form-group">
+                <label for="password">Special Date</label>
+                <input type="text" id="password" class="input-field" placeholder="DD/MM" autocomplete="off" required>
+            </div>
+
+            <div id="errorDisplay" class="error-message">Incorrect password or identity frame.</div>
+
+            <button type="submit" class="enter-btn">Verify & Enter Gateway →</button>
+        </form>
     </div>
 
     <script>
-        /* Anti-Throttling Context Variables & Pointers */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId = null;
-        let countdownIntervalId = null;
         let isTabActive = true;
         let particles = [];
 
@@ -149,7 +194,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        /* Performance Optimized Particle Blueprints */
         class MagicSpark {
             constructor() {
                 this.reset();
@@ -176,14 +220,12 @@
             }
         }
 
-        // Initialize constrained particle count to optimize processing memory footprint
         for(let i = 0; i < 40; i++) {
             particles.push(new MagicSpark());
         }
 
-        /* Safe Background-Aware Render Loop Engine */
         function render() {
-            if (!isTabActive) return; // Prevent render pileups when tab sleeping
+            if (!isTabActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for(let p of particles) {
                 p.update();
@@ -193,7 +235,6 @@
         }
         render();
 
-        /* Browser Tab State Interceptor Monitoring */
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isTabActive = false;
@@ -204,54 +245,55 @@
             }
         });
 
-        /* Clean Automated Countdown System Handler */
-        let remainingTime = 5;
-        const display = document.getElementById('countdownDisplay');
+        /* Identity Verification Engine */
+        function handleVerification(e) {
+            e.preventDefault();
+            
+            const userInp = document.getElementById('username').value.trim().toLowerCase();
+            const passInp = document.getElementById('password').value.trim();
+            const errorDisplay = document.getElementById('errorDisplay');
 
-        countdownIntervalId = setInterval(() => {
-            remainingTime--;
-            if (display) display.innerText = remainingTime;
+            // Case insensitive validations for the variants: "sujata" or "sujata jha"
+            const isUserValid = (userInp === "sujata" || userInp === "sujata jha");
+            const isPassValid = (passInp === "13/07");
 
-            if (remainingTime <= 0) {
-                executeCleanupAndNavigate();
+            if (isUserValid && isPassValid) {
+                errorDisplay.style.opacity = "0";
+                
+                // Add aesthetic premium ripple trigger animation to the submit button
+                const btn = e.target.querySelector('.enter-btn');
+                const circle = document.createElement('span');
+                const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+                const radius = diameter / 2;
+                
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${btn.clientWidth / 2 - radius}px`;
+                circle.style.top = `${btn.clientHeight / 2 - radius}px`;
+                circle.classList.add('ripple');
+                btn.appendChild(circle);
+
+                setTimeout(executeCleanupAndNavigate, 400);
+            } else {
+                errorDisplay.style.opacity = "1";
+                if(!isUserValid && isPassValid) {
+                    errorDisplay.innerText = "Identity unrecognized. Access denied.";
+                } else if(isUserValid && !isPassValid) {
+                    errorDisplay.innerText = "Incorrect special date framework.";
+                } else {
+                    errorDisplay.innerText = "Invalid credentials. Please try again.";
+                }
             }
-        }, 1000);
+        }
 
-        /* Absolute Thread Cleanup Routine (The Core Bug Fix) */
         function executeCleanupAndNavigate() {
-            // 1. Immediately break timer threads out of memory scope
-            if (countdownIntervalId) clearInterval(countdownIntervalId);
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
-            // 2. Clear canvas data to free memory arrays
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             canvas.width = 0;
             canvas.height = 0;
 
-            // 3. Clear any global remaining intervals across window context
-            let id = window.setInterval(function() {}, 0);
-            while (id--) { window.clearInterval(id); }
-
-            // 4. Force state-replaced history redirection frame transition
+            // Route user smoothly over into the gift.html context
             window.location.replace("gift.html");
-        }
-
-        /* Direct Interaction Handler with Embedded Ripple Mechanics */
-        function gateRedirect(e) {
-            const btn = e.currentTarget;
-            const circle = document.createElement('span');
-            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-            const radius = diameter / 2;
-            const rect = btn.getBoundingClientRect();
-
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${e.clientX - rect.left - radius}px`;
-            circle.style.top = `${e.clientY - rect.top - radius}px`;
-            circle.classList.add('ripple');
-            btn.appendChild(circle);
-
-            // Navigate right after ripple finishes scaling out gracefully
-            setTimeout(executeCleanupAndNavigate, 400);
         }
     </script>
 </body>
