@@ -130,7 +130,6 @@
 </head>
 <body>
 
-    <!-- Lightweight Interactive Fireworks Layer -->
     <canvas id="bgCanvas"></canvas>
 
     <div class="finale-panel">
@@ -144,7 +143,6 @@
     </div>
 
     <script>
-        /* Anti-Leak Thread State Pointer Configurations */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId = null;
@@ -158,7 +156,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        /* High-Performance Particle Constructor */
         class SparkNode {
             constructor(x, y, hue) {
                 this.x = x;
@@ -200,13 +197,11 @@
             }
         }
 
-        // Periodically schedule safe firework bursts
         let fireworkTimer = setInterval(launchFirework, 800);
 
-        /* Throttling-Insulated Core Animation Render Engine Loop */
         function runFinaleEngine() {
             if (!isTabActive) return;
-            ctx.fillStyle = 'rgba(2, 1, 7, 0.2)'; // Smooth trailing artifact blend
+            ctx.fillStyle = 'rgba(2, 1, 7, 0.2)'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let i = activeExplosions.length - 1; i >= 0; i--) {
@@ -222,7 +217,6 @@
         }
         runFinaleEngine();
 
-        /* Window Tab Focus Observer Hooks */
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isTabActive = false;
@@ -247,11 +241,10 @@
             let id = window.setInterval(function() {}, 0);
             while (id--) { window.clearInterval(id); }
 
-            // Route back to page 1 (message.html)
-            window.location.replace("message.html");
+            // Updated Route context path location targeting index.html
+            window.location.replace("index.html");
         }
 
-        /* Tap Event Action Processor */
         function restartExperience(e) {
             const btn = e.currentTarget;
             const circle = document.createElement('span');
