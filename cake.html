@@ -70,7 +70,7 @@
 
         .cake-container {
             width: 240px;
-            height: 240px;
+            height: 290px;
             margin: 0 auto 30px;
             position: relative;
             cursor: pointer;
@@ -111,15 +111,16 @@
             100% { transform: translateX(-50%) scale(1.1) rotate(1deg); }
         }
 
+        /* Repositioned Photo Holder Above the Cake Layers */
         .cake-photo-holder {
             position: absolute;
             width: 75px;
             height: 75px;
-            bottom: 40px;
+            bottom: 190px; /* Moved cleanly above top tier layer stack heights */
             border-radius: 50%;
             border: 3px solid #ffd54f;
             box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
-            z-index: 15;
+            z-index: 25;
             overflow: hidden;
             background: #151520;
             transition: transform 0.5s ease, border-color 0.5s ease;
@@ -227,11 +228,11 @@
         <p class="desc">Tap directly on the 3-layer premium cake to extinguish the flame and initialize credentials...</p>
         
         <div class="cake-container" id="birthdayCake" onclick="extinguishFlame(event)">
-            <div class="candle">
-                <div class="flame" id="candleFlame"></div>
-            </div>
             <div class="cake-photo-holder">
                 <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+            </div>
+            <div class="candle">
+                <div class="flame" id="candleFlame"></div>
             </div>
             <div class="layer layer-top"><div class="frosting-line"></div></div>
             <div class="layer layer-middle"><div class="frosting-line"></div></div>
@@ -249,7 +250,6 @@
         let isTabActive = true;
         let ambientParticles = [];
 
-        // Instantly kickstart audio play as soon as the document registers a touch/click context
         document.addEventListener('click', () => {
             if(audio.paused && !document.getElementById('birthdayCake').classList.contains('extinguished')) {
                 audio.play().catch(e => console.log("Autoplay deferred:", e));
@@ -312,7 +312,7 @@
 
         function destructAndNavigate() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            audio.pause(); // Final safety drop
+            audio.pause();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             canvas.width = 0; canvas.height = 0;
             window.location.replace("certificate.html");
@@ -323,7 +323,7 @@
             if(cake.classList.contains('extinguished')) return;
             
             cake.classList.add('extinguished');
-            audio.pause(); // <--- Instantly pauses the music when flame is popped down out of frame
+            audio.pause(); 
             
             const circle = document.createElement('span');
             const diameter = Math.max(cake.clientWidth, cake.clientHeight);
@@ -337,6 +337,14 @@
         }
 
         function navigateCertificate(e) {
+            const cake = document.getElementById('birthdayCake');
+            
+            // Critical Validation: Enforce candle blow out rule before permitting access routing
+            if (!cake.classList.contains('extinguished')) {
+                alert("Blow the candle first to proceed with next page");
+                return;
+            }
+
             const btn = e.currentTarget;
             const circle = document.createElement('span');
             const diameter = Math.max(btn.clientWidth, btn.clientHeight);
