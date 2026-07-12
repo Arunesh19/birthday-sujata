@@ -23,6 +23,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
 
         #bgCanvas {
@@ -36,12 +37,12 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             text-align: center;
         }
 
         .title-glow {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             background: linear-gradient(45deg, #00e5ff, #ff4081);
             -webkit-background-clip: text;
@@ -51,151 +52,101 @@
 
         .subtitle {
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 35px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
         }
 
-        /* Glassmorphic Form input layout card */
-        .input-card {
+        /* Glassmorphic Live Typewriter Console Layout */
+        .typing-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            margin-bottom: 35px;
+            padding: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            margin-bottom: 30px;
             text-align: left;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .form-control {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 14px 18px;
-            color: white;
-            font-size: 0.95rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: #00e5ff;
-            box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
-        }
-
-        textarea.form-control {
-            height: 100px;
-            resize: none;
-        }
-
-        /* Responsive signature wall message feed container */
-        .notes-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        @media (min-width: 480px) {
-            .notes-grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        .note-item {
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: left;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            min-height: 220px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: noteAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            justify-content: flex-start;
+            position: relative;
         }
 
-        @keyframes noteAppear {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .note-text {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 15px;
-            word-break: break-word;
-        }
-
-        .note-meta {
+        /* Console Dot Headers */
+        .card-header-dots {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px dashed rgba(255, 255, 255, 0.08);
-            padding-top: 10px;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .typing-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.95);
+            word-break: break-word;
+            font-weight: 400;
         }
 
-        .note-author {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #ff4081;
+        /* Blinking Console Cursor Element */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1rem;
+            background-color: #00e5ff;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
         }
 
-        .note-time {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
+        @keyframes blink {
+            50% { opacity: 0; }
         }
 
-        /* Core Global Action Layout Controls */
+        /* Core Global Action Layout Navigation Control */
         .action-btn {
             position: relative;
             overflow: hidden;
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             border: none;
-            border-radius: 16px;
+            border-radius: 18px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .submit-btn {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             background: linear-gradient(45deg, #00e5ff, #2979ff);
             color: white;
-            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.2);
+            box-shadow: 0 12px 30px rgba(0, 229, 255, 0.25);
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
         }
 
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            backdrop-filter: blur(10px);
-            margin-top: 15px;
+        /* Triggered dynamically when typing completes */
+        .action-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         .action-btn:hover {
-            transform: scale(1.01);
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 229, 255, 0.45);
         }
 
         .ripple {
@@ -203,7 +154,7 @@
             border-radius: 50%;
             transform: scale(0);
             animation: rippleEffect 0.6s linear;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
             pointer-events: none;
         }
 
@@ -217,34 +168,24 @@
     <canvas id="bgCanvas"></canvas>
 
     <div class="guestbook-container">
-        <h1 class="title-glow">The Digital Guestbook</h1>
-        <p class="subtitle">Leave a surprise birthday signature or message for Sujata</p>
+        <h1 class="title-glow">Incoming Transmission</h1>
+        <p class="subtitle">Decrypting birthday message records...</p>
 
-        <!-- Signature Entry Module block -->
-        <div class="input-card">
-            <div class="form-group">
-                <label for="guestName">Your Name</label>
-                <input type="text" id="guestName" class="form-control" placeholder="e.g., Arunesh" maxlength="30">
+        <div class="typing-card">
+            <div class="card-header-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
             </div>
-            <div class="form-group">
-                <label for="guestMessage">Wishes / Note</label>
-                <textarea id="guestMessage" class="form-control" placeholder="Write something exceptional..." maxlength="300"></textarea>
-            </div>
-            <button class="action-btn submit-btn" onclick="addSignature(event)">
-                Sign Guestbook ✨
-            </button>
+            <p class="typing-text"><span id="typewriter"></span><span class="cursor" id="cursor"></span></p>
         </div>
 
-        <!-- Real-time Live Message Wall Target Frame Container -->
-        <div class="notes-grid" id="notesGrid"></div>
-
-        <button class="action-btn nav-btn" onclick="proceedToFinale(event)">
+        <button class="action-btn" id="finaleBtn" onclick="proceedToFinale(event)">
             Proceed to Grand Finale →
         </button>
     </div>
 
     <script>
-        /* Anti-Lag Thread State Config Pointers */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId = null;
@@ -258,17 +199,14 @@
         window.addEventListener('resize', resize);
         resize();
 
-        /* Ambient floating micro particles framework */
         class DriftNode {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.radius = Math.random() * 1.1 + 0.3;
                 this.opacity = Math.random() * 0.3 + 0.1;
-                this.vy = -(Math.random() * 0.3 + 0.1);
+                this.vy = -(Math.random() * 0.2 + 0.05);
             }
             update() {
                 this.y += this.vy;
@@ -285,11 +223,8 @@
             }
         }
 
-        for (let i = 0; i < 30; i++) {
-            driftNodes.push(new DriftNode());
-        }
+        for (let i = 0; i < 30; i++) { driftNodes.push(new DriftNode()); }
 
-        /* Throttling-Insulated Loop Execution Framework */
         function runGuestbookEngine() {
             if (!isTabActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -301,7 +236,6 @@
         }
         runGuestbookEngine();
 
-        /* Window state runtime focus observers */
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isTabActive = false;
@@ -312,87 +246,36 @@
             }
         });
 
-        /* Persistent Storage Data Hydration Operations Engine */
-        const STORAGE_KEY = 'sujata_guestbook_notes';
+        /* Realtime Live Text Typing Machine Logic Routine */
+        const messageText = "Wishing a fantastic birthday to one of the strongest people I know. May this next year bring you even closer to your biggest dreams. As life gets busier, I hope you always take the time to stay safe and ground yourself. You have so much potential, and I know this next year will be your most successful one yet. Keep shining!";
+        
+        let charIndex = 0;
+        const typingSpeed = 35; // Adjust letter spacing delay speed execution in milliseconds here
+        const typewriterElement = document.getElementById("typewriter");
+        const finaleButton = document.getElementById("finaleBtn");
+        const cursorElement = document.getElementById("cursor");
 
-        function loadSignatures() {
-            const grid = document.getElementById('notesGrid');
-            grid.innerHTML = '';
-            
-            const localData = localStorage.getItem(STORAGE_KEY);
-            const notes = localData ? JSON.parse(localData) : getFallbackNotes();
-
-            notes.forEach(note => {
-                const card = document.createElement('div');
-                card.className = 'note-item';
-                card.innerHTML = `
-                    <p class="note-text">${escapeHtml(note.message)}</p>
-                    <div class="note-meta">
-                        <span class="note-author">@${escapeHtml(note.name)}</span>
-                        <span class="note-time">${escapeHtml(note.time)}</span>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function addSignature(e) {
-            createRipple(e);
-            
-            const nameInput = document.getElementById('guestName');
-            const msgInput = document.getElementById('guestMessage');
-            
-            const name = nameInput.value.trim();
-            const message = msgInput.value.trim();
-
-            if (!name || !message) {
-                alert('Please fill in both fields to log your message!');
-                return;
+        function typeWriterEffect() {
+            if (charIndex < messageText.length) {
+                typewriterElement.innerHTML += messageText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriterEffect, typingSpeed);
+            } else {
+                // Remove blinking cursor and slide navigation control into place gracefully
+                cursorElement.style.display = "none";
+                finaleButton.classList.add("visible");
             }
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            const notes = localData ? JSON.parse(localData) : getFallbackNotes();
-
-            const options = { hour: '2-digit', minute: '2-digit' };
-            const timestamp = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', options);
-
-            notes.unshift({ name, message, time: timestamp });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-
-            nameInput.value = '';
-            msgInput.value = '';
-            
-            loadSignatures();
-        }
-
-        function getFallbackNotes() {
-            return [
-                { name: 'Squad Leader', message: 'Wishing you the happiest of birthdays, Sujata! Keep crushing your benchmarks!', time: 'Jul 06 10:15 PM' },
-                { name: 'CodePartner', message: 'May your loop indexes never overflow and your positive aura keep radiating bright!', time: 'Jul 06 09:30 PM' }
-            ];
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         /* Absolute Memory Disconnect Routine and Route Forwarding Pipeline */
         function destructAndNavigate() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.width = 0;
-            canvas.height = 0;
-            let id = window.setInterval(function() {}, 0);
-            while (id--) { window.clearInterval(id); }
+            canvas.width = 0; canvas.height = 0;
             window.location.replace("finale.html");
         }
 
         function proceedToFinale(e) {
-            createRipple(e);
-            setTimeout(destructAndNavigate, 400);
-        }
-
-        function createRipple(e) {
             const btn = e.currentTarget;
             const circle = document.createElement('span');
             const diameter = Math.max(btn.clientWidth, btn.clientHeight);
@@ -403,10 +286,14 @@
             circle.style.top = `${e.clientY - rect.top - radius}px`;
             circle.classList.add('ripple');
             btn.appendChild(circle);
+
+            setTimeout(destructAndNavigate, 400);
         }
 
-        // Run primary render loop layout compilation on window visibility context init
-        loadSignatures();
+        // Initialize live script runtime sequence
+        window.onload = () => {
+            setTimeout(typeWriterEffect, 600); // Tiny pause before starting execution
+        };
     </script>
 </body>
 </html>
