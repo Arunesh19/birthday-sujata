@@ -67,13 +67,14 @@
             font-size: 0.95rem;
             opacity: 0.75;
             margin-bottom: 35px;
+            transition: opacity 0.4s ease;
         }
 
         /* Interactive Vector Gift Box Structure */
         .gift-box-container {
             width: 140px;
             height: 140px;
-            margin: 0 auto 40px;
+            margin: 0 auto 20px;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
@@ -98,7 +99,7 @@
             left: -5px;
             z-index: 3;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
         }
 
         .gift-body {
@@ -111,6 +112,7 @@
             z-index: 2;
             box-shadow: 0 15px 35px rgba(233, 30, 99, 0.3);
             overflow: hidden;
+            transition: transform 0.6s ease;
         }
 
         /* Ribbon Decoration Overlays */
@@ -126,8 +128,59 @@
 
         /* Box Open Animation State Changes */
         .gift-box-container.open .gift-lid {
-            transform: translateY(-50px) rotate(-25deg) scale(0.9);
+            transform: translateY(-60px) rotate(-25deg) scale(0.8);
             opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Revealed Message Typography Panel */
+        .gift-reveal-msg {
+            max-height: 0;
+            opacity: 0;
+            transform: scale(0.9);
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #ffd54f;
+            text-shadow: 0 0 15px rgba(255, 213, 79, 0.4);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            padding: 0 10px;
+        }
+
+        .gift-reveal-msg.show {
+            max-height: 100px;
+            opacity: 1;
+            transform: scale(1);
+            margin: 20px 0 30px;
+        }
+
+        /* Navigation Forward Flow Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.25);
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .action-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(255, 64, 129, 0.45);
         }
 
         /* Action Response System */
@@ -151,16 +204,23 @@
 
     <div class="gift-wrapper">
         <h1 class="title-glow">A Box for Sujata</h1>
-        <p class="instruction">Tap the premium mystery box to uncover what lies within the next tracking channel...</p>
+        <p class="instruction" id="boxHint">Tap the premium mystery box to uncover what lies within the next tracking channel...</p>
         
         <div class="gift-box-container" id="mysteryBox" onclick="openGiftSequence(event)">
             <div class="gift-lid"><div class="ribbon-vertical" style="height:35px;"></div></div>
             <div class="gift-body"><div class="ribbon-vertical"></div></div>
         </div>
+
+        <div class="gift-reveal-msg" id="revealMessage">
+            Receive your gift on Tuesday,<br>it's awaiting for you. ✨
+        </div>
+
+        <button class="action-btn" id="continueBtn" onclick="destructAndNavigate(event)">
+            Continue Journey →
+        </button>
     </div>
 
     <script>
-        /* Thread Management Framework Pointers */
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId = null;
@@ -174,11 +234,8 @@
         window.addEventListener('resize', resize);
         resize();
 
-        /* High-Performance Vector Spark Engine Blueprint */
         class Sparkle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -205,11 +262,8 @@
             }
         }
 
-        for(let i=0; i<35; i++) {
-            sparkles.push(new Sparkle());
-        }
+        for(let i=0; i<35; i++) { sparkles.push(new Sparkle()); }
 
-        /* Throttling-Aware Render Engine */
         function renderLoop() {
             if (!isTabActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -221,7 +275,6 @@
         }
         renderLoop();
 
-        /* Window State Observer Hooks */
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 isTabActive = false;
@@ -232,32 +285,39 @@
             }
         });
 
-        /* Safe Terminal Cleanup and State Redirection */
-        function destructAndNavigate() {
-            // 1. Terminate render thread loops instantly
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        function destructAndNavigate(e) {
+            if(e && e.currentTarget) {
+                const btn = e.currentTarget;
+                const circle = document.createElement('span');
+                const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+                const radius = diameter / 2;
+                const rect = btn.getBoundingClientRect();
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - rect.left - radius}px`;
+                circle.style.top = `${e.clientY - rect.top - radius}px`;
+                circle.classList.add('ripple');
+                btn.appendChild(circle);
+            }
 
-            // 2. Drop drawing buffers 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            canvas.width = 0;
-            canvas.height = 0;
+            setTimeout(() => {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas.width = 0; canvas.height = 0;
+                
+                let id = window.setInterval(function() {}, 0);
+                while (id--) { window.clearInterval(id); }
 
-            // 3. Purge general interval leaks 
-            let id = window.setInterval(function() {}, 0);
-            while (id--) { window.clearInterval(id); }
-
-            // 4. State replacement route navigation
-            window.location.replace("tunnel.html");
+                window.location.replace("tunnel.html");
+            }, 300);
         }
 
-        /* Premium Tap State Processor */
         function openGiftSequence(e) {
             const box = document.getElementById('mysteryBox');
-            if(box.classList.contains('open')) return; // Prevent double tap bugs
+            if(box.classList.contains('open')) return; 
             
             box.classList.add('open');
 
-            // Build structural ripple element feedback
+            // Ripple Feedback
             const circle = document.createElement('span');
             const diameter = Math.max(box.clientWidth, box.clientHeight);
             const radius = diameter / 2;
@@ -268,8 +328,13 @@
             circle.classList.add('ripple');
             box.appendChild(circle);
 
-            // Wait briefly for the open lid animation to flare out before redirecting cleanly
-            setTimeout(destructAndNavigate, 750);
+            // Hide old sub-hints and reveal the hidden text/action elements cleanly
+            document.getElementById('boxHint').style.opacity = '0';
+            
+            setTimeout(() => {
+                document.getElementById('revealMessage').classList.add('show');
+                document.getElementById('continueBtn').classList.add('show');
+            }, 400);
         }
     </script>
 </body>
