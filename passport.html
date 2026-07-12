@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gateway Passport ✈️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,13 +15,13 @@
         }
 
         body {
-            background: linear-gradient(135deg, #04020a, #010103);
+            background: #0c0f1d;
             min-height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: #1a1a1a;
             padding: 20px;
         }
 
@@ -32,13 +32,14 @@
             pointer-events: none;
         }
 
-        .passport-book {
+        /* Realistic Book Perspective Container */
+        .passport-container {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 420px;
-            height: 580px;
-            perspective: 1500px;
+            max-width: 440px;
+            height: 600px;
+            perspective: 2000px;
             opacity: 0;
             transform: translateY(20px);
             animation: bookShow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -48,79 +49,133 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* The physical passport book structure */
+        .passport-book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Real Passport Page Foundations */
         .passport-page {
             position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
-            border-radius: 24px;
-            padding: 35px 25px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            backface-visibility: hidden;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+        }
+
+        /* FRONT COVER: Navy Blue Leather Texture + Matte Gold Emblem */
+        .page-cover {
+            z-index: 5;
+            background: linear-gradient(135deg, #0f1c3f, #081026);
+            padding: 40px 30px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: space-between;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transform-origin: left center;
-            backface-visibility: hidden;
         }
 
-        .page-1 { z-index: 5; }
-        .page-2 { z-index: 4; transform: rotateY(90deg); opacity: 0; pointer-events: none; }
-
-        .passport-book.flipped .page-1 {
-            transform: rotateY(-90deg);
-            opacity: 0;
-            pointer-events: none;
+        .cover-gold-text {
+            color: #dfb76c;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
         }
 
-        .passport-book.flipped .page-2 {
-            transform: rotateY(0deg);
-            opacity: 1;
-            pointer-events: auto; /* Fixed interactions */
-            z-index: 6;
+        .passport-emblem {
+            width: 130px;
+            height: 130px;
+            border: 3px double #dfb76c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #dfb76c;
+            margin: 40px 0;
+            background: rgba(223, 183, 108, 0.03);
+            box-shadow: inset 0 0 15px rgba(223, 183, 108, 0.1);
+        }
+
+        .biometric-icon {
+            width: 32px;
+            height: 20px;
+            border: 2px solid #dfb76c;
+            border-radius: 4px;
+            position: relative;
+            margin-top: 15px;
+        }
+        .biometric-icon::before {
+            content: '';
+            position: absolute;
+            inset: 4px 8px;
+            background: #dfb76c;
+            border-radius: 2px;
+        }
+
+        /* INSIDE DATA PAGE: Authentic Security Watermark Fill */
+        .page-data {
+            z-index: 4;
+            background: #f4edd9 linear-gradient(rgba(223,183,108,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(223,183,108,0.06) 1px, transparent 1px);
+            background-size: 8px 8px;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            transform: rotateY(180deg);
+            border-left: 5px solid #e1d8be; /* Spine shadow hint */
+        }
+
+        /* Flips the book open cleanly along the spine axis */
+        .passport-container.flipped .passport-book {
+            transform: rotateY(-180deg);
         }
 
         .passport-header {
-            text-align: center;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
-            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #9e2a2b;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
         }
 
         .passport-title {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, #ffd54f, #ff4081);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #9e2a2b;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .passport-sub {
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.5;
-            margin-top: 4px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #333;
         }
 
+        /* Core Personal Details Division Layout */
         .profile-section {
             display: flex;
-            gap: 20px;
-            align-items: center;
-            margin-top: 25px;
+            gap: 16px;
+            margin-bottom: 15px;
         }
 
         .passport-photo {
-            width: 100px;
-            height: 125px;
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            background: rgba(0,0,0,0.3);
+            width: 110px;
+            height: 140px;
+            border: 1px solid #999;
+            background: #e3dac9;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+            position: relative;
             overflow: hidden;
         }
 
@@ -128,182 +183,212 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: sepia(0.2) contrast(0.95);
+        }
+
+        /* Holographic Security Overlay Ribbon effect */
+        .passport-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg, transparent 30%, rgba(255,255,255,0.25) 45%, rgba(0,229,255,0.15) 55%, transparent 70%);
+            transform: translateX(-100%);
+            animation: holoSweep 4s infinite linear;
+        }
+
+        @keyframes holoSweep {
+            to { transform: translateX(100%); }
         }
 
         .meta-data-fields {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
         .data-row .label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #666;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.4);
         }
 
         .data-row .value {
+            font-family: 'Courier Prime', monospace;
             font-size: 0.95rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
         }
 
+        /* Dynamic Grid for Security Visa Stamps */
         .stamp-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin: 15px 0;
             flex-grow: 1;
-            justify-content: center;
-            align-content: center;
         }
 
         .visa-stamp {
-            border: 2px dashed rgba(255, 64, 129, 0.3);
-            border-radius: 16px;
-            padding: 15px 10px;
+            border: 3px double #1f4e5b;
+            border-radius: 12px;
+            padding: 10px;
             text-align: center;
-            transform: rotate(-3deg);
-            background: rgba(255, 64, 129, 0.02);
+            transform: rotate(-4deg);
+            background: rgba(31, 78, 91, 0.02);
+            color: #1f4e5b;
         }
 
         .visa-stamp:nth-child(even) {
-            transform: rotate(4deg);
-            border-color: rgba(255, 213, 79, 0.3);
-            background: rgba(255, 213, 79, 0.02);
+            transform: rotate(3deg);
+            border: 2px dashed #a94442;
+            color: #a94442;
         }
 
         .stamp-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.5px;
         }
 
         .stamp-date {
+            font-family: 'Courier Prime', monospace;
             font-size: 0.7rem;
-            opacity: 0.5;
             margin-top: 2px;
         }
 
-        .action-btn {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 18px;
-            background: linear-gradient(45deg, #ff4081, #ff80ab);
-            color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
+        /* Machine Readable Zone (MRZ) Typography Blocks */
+        .mrz-zone {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.82rem;
+            letter-spacing: 2px;
+            line-height: 1.25;
+            color: #222;
+            border-top: 1px solid rgba(0,0,0,0.15);
+            padding-top: 10px;
             margin-top: auto;
+            text-transform: uppercase;
         }
 
-        .btn-alt {
-            background: linear-gradient(45deg, #ffd54f, #ffb300);
-            color: #04020a;
-            box-shadow: 0 10px 25px rgba(255, 213, 79, 0.15);
+        /* Passport Action Button Core Control Interface */
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #0f1c3f;
+            color: #dfb76c;
+            border: 1px solid #dfb76c;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .action-btn:hover { transform: scale(1.02); }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: rippleEffect 0.6s linear;
-            background: rgba(255, 255, 255, 0.4);
-            pointer-events: none;
+        .action-btn:hover {
+            background: #16285a;
         }
 
-        @keyframes rippleEffect {
-            to { transform: scale(4); opacity: 0; }
+        .btn-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
         }
+
+        .btn-secondary {
+            background: #e3dac9;
+            color: #333;
+            border: 1px solid #999;
+        }
+        .btn-secondary:hover { background: #d7cdba; }
     </style>
 </head>
 <body>
 
     <canvas id="bgCanvas"></canvas>
 
-    <div class="passport-book" id="passportBook">
-        
-        <div class="passport-page page-1">
-            <div class="passport-header">
-                <div class="passport-title">Gateway Passport</div>
-                <div class="passport-sub">Identity & Credentials</div>
+    <div class="passport-container" id="passportContainer">
+        <div class="passport-book">
+            
+            <!-- PHYSICAL COVER LAYER -->
+            <div class="passport-page page-cover">
+                <div class="cover-gold-text" style="font-size: 1.1rem;">Passport</div>
+                
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="passport-emblem">✈️</div>
+                    <div class="cover-gold-text" style="font-size: 0.85rem; letter-spacing: 2px;">Gateway Verification</div>
+                    <div class="biometric-icon"></div>
+                </div>
+
+                <button class="action-btn" onclick="openPassport(true)">Open Passport Book 📖</button>
             </div>
 
-            <div class="profile-section">
-                <div class="passport-photo">
-                    <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+            <!-- PHYSICAL INSIDE DATA PAGE LAYER -->
+            <div class="passport-page page-data">
+                <div class="passport-header">
+                    <div class="passport-title">Gateway Passport</div>
+                    <div class="passport-sub">P<span style="color:#666; margin-left:2px;">SUJ</span></div>
                 </div>
-                <div class="meta-data-fields">
+
+                <div class="profile-section">
+                    <div class="passport-photo">
+                        <img src="avatar.png" alt="Sujata" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                    <div class="meta-data-fields">
+                        <div class="data-row">
+                            <div class="label">Surname / Given Names</div>
+                            <div class="value">Sujata</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="label">Passport No.</div>
+                            <div class="value">BDAY-2026-SUJ</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="label">Nationality</div>
+                            <div class="value">VIP Earthling</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meta-data-fields" style="grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="data-row">
-                        <div class="label">Surname / Name</div>
-                        <div class="value">Sujata</div>
+                        <div class="label">Date of Issue</div>
+                        <div class="value">06 JUL 2026</div>
                     </div>
                     <div class="data-row">
-                        <div class="label">Nationality</div>
-                        <div class="value">VIP Earthling</div>
+                        <div class="label">Authority</div>
+                        <div class="value">B-DAY CMTE</div>
                     </div>
-                    <div class="data-row">
-                        <div class="label">Passport Number</div>
-                        <div class="value">BDAY-2026-SUJ</div>
+                </div>
+
+                <!-- Verified Security Visa Seals -->
+                <div class="stamp-grid">
+                    <div class="visa-stamp">
+                        <div class="stamp-title">🎂 LAYER CAKE</div>
+                        <div class="stamp-date">APPROVED // 2026</div>
                     </div>
+                    <div class="visa-stamp">
+                        <div class="stamp-title">👑 LEGEND STATUS</div>
+                        <div class="stamp-date">VALID // PERMANENT</div>
+                    </div>
+                </div>
+
+                <!-- Standard Machine Readable Zone Format -->
+                <div class="mrz-zone">
+                    P&lt;SUJATALÉGEND&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+                    BDAY202607&lt;6SUJ20260712&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;02
+                </div>
+
+                <div class="btn-container">
+                    <button class="action-btn btn-secondary" onclick="openPassport(false)">Close Book</button>
+                    <button class="action-btn" onclick="exitGateway()">Exit Gateway →</button>
                 </div>
             </div>
 
-            <div class="meta-data-fields" style="margin-top: 25px; flex-grow: 1;">
-                <div class="data-row">
-                    <div class="label">Date of Issue</div>
-                    <div class="value">06 JUL 2026</div>
-                </div>
-                <div class="data-row">
-                    <div class="label">Authority</div>
-                    <div class="value">The Ultimate Birthday Committee</div>
-                </div>
-            </div>
-
-            <button class="action-btn" onclick="flipPassport(true, event)">View Visas & Milestones →</button>
         </div>
-
-        <div class="passport-page page-2">
-            <div class="passport-header">
-                <div class="passport-title">Visa Entries</div>
-                <div class="passport-sub">Validated Chapters</div>
-            </div>
-
-            <div class="stamp-grid">
-                <div class="visa-stamp">
-                    <div class="stamp-title">🎂 LAYER CAKE</div>
-                    <div class="stamp-date">PASSED // 2026</div>
-                </div>
-                <div class="visa-stamp">
-                    <div class="stamp-title">📜 CERTIFIED</div>
-                    <div class="stamp-date">APPROVED // ISSUED</div>
-                </div>
-                <div class="visa-stamp">
-                    <div class="stamp-title">💖 WISHLIST</div>
-                    <div class="stamp-date">UNLOCKED // REVEALED</div>
-                </div>
-                <div class="visa-stamp">
-                    <div class="stamp-title">🌟 NEW YEAR</div>
-                    <div class="stamp-date">INITIALIZED // LIVE</div>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <button class="action-btn btn-alt" onclick="flipPassport(false, event)">← Back to Profile</button>
-                <button class="action-btn" onclick="completeOnboarding(event)">Exit Verification Gateway</button>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -325,9 +410,9 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.radius = Math.random() * 1 + 0.3;
+                this.radius = Math.random() * 1.2 + 0.2;
                 this.alpha = Math.random() * 0.4 + 0.1;
-                this.speed = Math.random() * 0.05 + 0.02;
+                this.speed = Math.random() * 0.03 + 0.01;
             }
             update() {
                 this.alpha += this.speed;
@@ -336,7 +421,7 @@
             draw() {
                 ctx.save();
                 ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = '#dfb76c'; // Matching gold dust vibe
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fill();
@@ -344,7 +429,7 @@
             }
         }
 
-        for(let i=0; i<35; i++) { stellarNodes.push(new StarNode()); }
+        for(let i=0; i<40; i++) { stellarNodes.push(new StarNode()); }
 
         function runPassportEngine() {
             if (!isTabActive) return;
@@ -367,39 +452,20 @@
             }
         });
 
-        function flipPassport(forward, e) {
-            createRipple(e);
-            const book = document.getElementById('passportBook');
-            if(forward) {
-                book.classList.add('flipped');
+        function openPassport(shouldOpen) {
+            const container = document.getElementById('passportContainer');
+            if(shouldOpen) {
+                container.classList.add('flipped');
             } else {
-                book.classList.remove('flipped');
+                container.classList.remove('flipped');
             }
         }
 
-        /* Fixed Navigation Hook to pass directly into guestbook.html */
-        function completeOnboarding(e) {
-            createRipple(e);
+        function exitGateway() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             canvas.width = 0; canvas.height = 0;
-            
-            setTimeout(() => {
-                window.location.replace("guestbook.html");
-            }, 400);
-        }
-
-        function createRipple(e) {
-            const btn = e.currentTarget;
-            const circle = document.createElement('span');
-            const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-            const radius = diameter / 2;
-            const rect = btn.getBoundingClientRect();
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${e.clientX - rect.left - radius}px`;
-            circle.style.top = `${e.clientY - rect.top - radius}px`;
-            circle.classList.add('ripple');
-            btn.appendChild(circle);
+            window.location.replace("guestbook.html");
         }
     </script>
 </body>
